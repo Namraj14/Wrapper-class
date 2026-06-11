@@ -228,6 +228,7 @@ If you need to carry multiple related pieces of information together, use a Wrap
 
 ### Wrapper Class
 
+##### Example1
 ```apex
 public class AccountWrapper {
     public Account acc;
@@ -277,3 +278,45 @@ Example UI:
 ☐ XYZ Corp
 ☐ Test Corp
 ```
+## Wrapper Class Example: Account and Related Contacts
+
+### Wrapper Class
+#### Example 2
+```apex
+public class AccountWrapper {
+    public Account acc;
+    public List<Contact> contacts;
+}
+```
+
+### Creating and Populating the Wrapper
+
+```apex
+Account a = new Account(
+    Name = 'ABC'
+);
+
+List<Contact> con = new List<Contact>();
+
+for(Integer i = 0; i <= 2; i++) {
+
+    Contact cont = new Contact();
+    cont.LastName = 'xyz' + i;
+
+    con.add(cont);
+}
+
+AccountWrapper aw = new AccountWrapper();
+
+aw.acc = a;
+aw.contacts = con;
+```
+
+### Explanation
+
+This wrapper combines:
+
+* An `Account` record
+* A `List<Contact>` containing related contacts
+
+Instead of sending the Account and Contacts separately, the wrapper groups them into a single object.
