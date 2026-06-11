@@ -238,7 +238,7 @@ public class AccountWrapper {
 ### Using the Wrapper
 
 ```apex
-AccountWrapper acc = new AccountWrapper();
+AccountWrapper aw = new AccountWrapper();
 
 List<Account> accList = new List<Account>();
 
@@ -248,8 +248,8 @@ accList.add(
     )
 );
 
-acc.acc = accList[0];
-acc.isSelected = true;
+aw.acc = accList[0];
+aw.isSelected = true;
 ```
 
 ### Explanation
