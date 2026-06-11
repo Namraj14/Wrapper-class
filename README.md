@@ -224,16 +224,56 @@ Account
 
 If you need to carry multiple related pieces of information together, use a Wrapper Class.
 
-#### Example
+## Wrapper Class Example: Account with Checkbox Selection
+
+### Wrapper Class
+
+```apex
 public class AccountWrapper {
     public Account acc;
     public Boolean isSelected;
 }
-#### Anonymous window
+```
+
+### Using the Wrapper
+
+```apex
 AccountWrapper acc = new AccountWrapper();
+
 List<Account> accList = new List<Account>();
-accList.add(new Account(
-	Name = 'ABC Corp'
-));
-acc.acc= accList[0];
+
+accList.add(
+    new Account(
+        Name = 'ABC Corp'
+    )
+);
+
+acc.acc = accList[0];
 acc.isSelected = true;
+```
+
+### Explanation
+
+In this example, the wrapper class combines:
+
+* An `Account` record
+* A custom Boolean field (`isSelected`)
+
+The `Account` object does not have a field that represents whether a user has selected the record in the UI. The wrapper allows us to store both the Salesforce record and the UI-specific state together.
+
+
+### Common Use Case
+
+This pattern is commonly used in:
+
+* Lightning Web Components (LWC)
+* Aura Components
+* Visualforce Pages
+
+Example UI:
+
+```text
+☑ ABC Corp
+☐ XYZ Corp
+☐ Test Corp
+```
