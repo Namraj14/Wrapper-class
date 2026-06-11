@@ -223,3 +223,17 @@ Account
 ```
 
 If you need to carry multiple related pieces of information together, use a Wrapper Class.
+
+#### Example
+public class AccountWrapper {
+    public Account acc;
+    public Boolean isSelected;
+}
+#### Anonymous window
+AccountWrapper acc = new AccountWrapper();
+List<Account> accList = new List<Account>();
+accList.add(new Account(
+	Name = 'ABC Corp'
+));
+acc.acc= accList[0];
+acc.isSelected = true;
