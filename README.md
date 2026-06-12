@@ -320,3 +320,363 @@ This wrapper combines:
 * A `List<Contact>` containing related contacts
 
 Instead of sending the Account and Contacts separately, the wrapper groups them into a single object.
+
+# Wrapper Class Design Rules & Memory Tricks
+
+## Rule 1: Ask "Can a Single Object Solve This?"
+
+If all required data comes from a single object, a wrapper is usually not needed.
+
+### Example
+
+```text
+Account Name
+Account Phone
+Account Industry
+```
+
+All fields belong to the Account object.
+
+```apex
+List<Account> accounts;
+```
+
+✅ No Wrapper Needed
+
+---
+
+## Rule 2: Multiple Objects = Wrapper
+
+If the required data comes from multiple objects, use a wrapper.
+
+### Example
+
+```text
+Account Name
+Contact Name
+Opportunity Name
+```
+
+Data comes from:
+
+```text
+Account
+Contact
+Opportunity
+```
+
+✅ Wrapper Needed
+
+---
+
+## Rule 3: Calculated Data = Wrapper
+
+Use a wrapper when you need to send calculated values that do not exist on the object.
+
+### Example
+
+```text
+Account Name
+Total Contacts
+```
+
+```apex
+Integer totalContacts;
+```
+
+`totalContacts` is calculated in Apex.
+
+✅ Wrapper Needed
+
+---
+
+## Rule 4: UI-Specific Fields = Wrapper
+
+Use a wrapper when the UI requires additional fields that do not exist on the Salesforce object.
+
+### Example
+
+```text
+Account Name
+Checkbox Selected/Not Selected
+```
+
+```apex
+public Account acc;
+public Boolean isSelected;
+```
+
+The Account object does not contain an `isSelected` field.
+
+✅ Wrapper Needed
+
+---
+
+## Rule 5: One Record = Single Object
+
+When the wrapper represents a single record, use a single object.
+
+### Example
+
+```text
+Workspace Name
+Building Name
+Floor Name
+```
+
+```apex
+public Workspace__c workspace;
+```
+
+✅ Correct
+
+```apex
+public List<Workspace__c> workspaces;
+```
+
+❌ Incorrect for a single record
+
+---
+
+## Rule 6: Multiple Records = List
+
+When the wrapper represents multiple records, use a list.
+
+### Example
+
+```text
+Account
+All Related Contacts
+```
+
+```apex
+public Account acc;
+public List<Contact> contacts;
+```
+
+✅ Correct
+
+---
+
+## Rule 7: Send Only What the UI Needs
+
+Avoid sending entire objects when only a few fields are required.
+
+### Bad Design
+
+```apex
+public Building__c building;
+```
+
+If the UI only displays:
+
+```text
+Building Name
+```
+
+### Better Design
+
+```apex
+public String buildingName;
+```
+
+Benefits:
+
+* Smaller payload
+* Better performance
+* Easier maintenance
+
+---
+
+## Rule 8: Wrapper = Custom Container
+
+A Wrapper Class is simply a custom container.
+
+It can store:
+
+```apex
+Account
+Contact
+Opportunity
+String
+Integer
+Boolean
+Decimal
+List
+Map
+Custom Classes
+Other Wrappers
+```
+
+---
+
+## Rule 9: Wrapper Does Not Create Records
+
+A wrapper only stores data.
+
+### Example
+
+```apex
+AccountWrapper aw = new AccountWrapper();
+```
+
+This does NOT create an Account record.
+
+It only creates a wrapper object in memory.
+
+---
+
+## Rule 10: Think of a Wrapper as a School Bag
+
+### Individual Items
+
+```text
+Account     = Book
+Contact     = Notebook
+Boolean     = Pen
+String      = ID Card
+```
+
+### Wrapper
+
+```text
+School Bag
+```
+
+The bag carries everything together.
+
+This is exactly what a Wrapper Class does.
+
+---
+
+# Common Interview Questions
+
+## What is a Wrapper Class?
+
+A Wrapper Class is a custom Apex class used to combine multiple related pieces of data into a single object.
+
+---
+
+## Why Do We Use Wrapper Classes?
+
+* Combine data from multiple objects
+* Send calculated values
+* Add UI-specific fields
+* Transfer structured data to LWC, Aura, Visualforce, or APIs
+
+---
+
+## Most Common Use Case
+
+Displaying records with a checkbox.
+
+### Example
+
+```apex
+public class AccountWrapper {
+    public Account acc;
+    public Boolean isSelected;
+}
+```
+
+---
+
+## Wrapper vs Map
+
+### Wrapper
+
+```apex
+wrapper.acc;
+wrapper.isSelected;
+```
+
+### Map
+
+```apex
+map.get('acc');
+map.get('selected');
+```
+
+Advantages of Wrapper:
+
+* Strongly typed
+* Easier to read
+* Easier to maintain
+* Better code completion support
+
+---
+
+## Can a Wrapper Contain Lists?
+
+Yes.
+
+```apex
+public List<Contact> contacts;
+```
+
+---
+
+## Can a Wrapper Contain Salesforce Objects?
+
+Yes.
+
+```apex
+public Account acc;
+```
+
+---
+
+## Can a Wrapper Contain Another Wrapper?
+
+Yes.
+
+```apex
+public AddressWrapper address;
+```
+
+---
+
+# Wrapper Class Decision Formula
+
+Before creating a wrapper, ask:
+
+```text
+Is my data coming from:
+1. Multiple Objects?
+OR
+2. Calculated Values?
+OR
+3. UI-Specific Fields?
+```
+
+If the answer is YES to any of the above:
+
+✅ Use a Wrapper Class
+
+If the answer is NO:
+
+✅ Return the Salesforce Object Directly
+
+---
+
+# Quick Memory Formula
+
+```text
+Single Object + Existing Fields
+= No Wrapper
+
+Multiple Objects
+= Wrapper
+
+Calculated Values
+= Wrapper
+
+UI-Specific Fields
+= Wrapper
+```
+
+Remember:
+
+```text
+Wrapper = Custom Container for Related Data
+```
