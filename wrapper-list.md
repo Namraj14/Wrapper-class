@@ -142,3 +142,138 @@ Ask yourself:
 
 * One record → Use a single object.
 * Many records → Use a `List<Object>`.
+
+* # Wrapper Class in LWC
+
+## Wrapper Class
+
+```apex
+public class AccountWrapper {
+
+    @AuraEnabled
+    public Account acc;
+
+    @AuraEnabled
+    public List<Contact> contacts;
+}
+```
+
+## What LWC Receives
+
+```json
+{
+  "acc": {
+    "Name": "ABC Corp"
+  },
+  "contacts": [
+    {
+      "LastName": "Raj"
+    },
+    {
+      "LastName": "Amit"
+    }
+  ]
+}
+```
+
+## Accessing Wrapper Data in LWC
+
+Store the Apex response:
+
+```javascript
+this.wrapperResult = result;
+```
+
+### Access Account Name
+
+```javascript
+this.wrapperResult.acc.Name
+```
+
+Output:
+
+```text
+ABC Corp
+```
+
+### Access First Contact
+
+```javascript
+this.wrapperResult.contacts[0]
+```
+
+Output:
+
+```json
+{
+  "LastName": "Raj"
+}
+```
+
+### Access First Contact Last Name
+
+```javascript
+this.wrapperResult.contacts[0].LastName
+```
+
+Output:
+
+```text
+Raj
+```
+
+---
+
+# Important Rule
+
+If the Wrapper contains:
+
+```apex
+public Account acc;
+```
+
+then access Account fields as:
+
+```javascript
+wrapperResult.acc.Name
+wrapperResult.acc.Id
+wrapperResult.acc.Phone
+```
+
+NOT:
+
+```javascript
+wrapperResult.Name
+wrapperResult.Id
+```
+
+because the Account record is stored inside the `acc` property.
+
+---
+
+# Memory Trick
+
+```text
+Wrapper Class
+        ↓
+JSON
+        ↓
+JavaScript Object
+```
+
+Apex Wrapper:
+
+```apex
+public Account acc;
+public List<Contact> contacts;
+```
+
+becomes:
+
+```javascript
+wrapperResult.acc
+wrapperResult.contacts
+```
+
+Think of a Wrapper Class as a JavaScript object after it reaches LWC.
+
