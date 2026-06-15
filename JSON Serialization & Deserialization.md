@@ -962,8 +962,8 @@ data = []
 
 Whenever you receive JSON:
 
-1. Find `{}` → Create Wrapper Classes.
-2. Find `[]` → Create Lists.
+1. Find `{}` → Create Wrapper Classes. public List CustomerWrapper data;
+2. Find `[]` → Create Lists. (public List<CustomerWrapper> data)
 3. Find text values → String.
 4. Find numeric values → Decimal.
 5. Find true/false values → Boolean.
