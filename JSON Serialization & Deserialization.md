@@ -302,3 +302,351 @@ JSON.deserialize()
      ↓
 Apex Object
 ```
+# Designing Wrapper Classes from JSON
+
+One of the most common Salesforce integration tasks is converting a JSON payload into Apex Wrapper Classes.
+
+## Golden Rules
+
+### Rule 1: Curly Braces `{}` = Wrapper Class
+
+JSON:
+
+```json
+{
+    "customer": {
+        "name": "ABC Corp",
+        "city": "Mumbai"
+    }
+}
+```
+
+Wrapper:
+
+```apex
+public CustomerWrapper customer;
+```
+
+```apex
+public class CustomerWrapper {
+    public String name;
+    public String city;
+}
+```
+
+---
+
+### Rule 2: Square Brackets `[]` = List
+
+JSON:
+
+```json
+{
+    "contacts":[
+        {
+            "name":"Raj"
+        },
+        {
+            "name":"Amit"
+        }
+    ]
+}
+```
+
+Wrapper:
+
+```apex
+public List<ContactWrapper> contacts;
+```
+
+```apex
+public class ContactWrapper {
+    public String name;
+}
+```
+
+---
+
+### Rule 3: Text Values = String
+
+JSON:
+
+```json
+{
+    "name":"Raj"
+}
+```
+
+Wrapper:
+
+```apex
+public String name;
+```
+
+---
+
+### Rule 4: Numbers = Usually Decimal
+
+JSON:
+
+```json
+{
+    "salary":50000
+}
+```
+
+Wrapper:
+
+```apex
+public Decimal salary;
+```
+
+Common examples:
+
+```text
+Amount
+Salary
+Revenue
+Balance
+Price
+Credit Limit
+```
+
+Use:
+
+```apex
+Decimal
+```
+
+---
+
+### Rule 5: True / False = Boolean
+
+JSON:
+
+```json
+{
+    "isActive":true
+}
+```
+
+Wrapper:
+
+```apex
+public Boolean isActive;
+```
+
+---
+
+# Example 1: Nested Object
+
+JSON:
+
+```json
+{
+    "customer":{
+        "name":"ABC Corp",
+        "city":"Mumbai"
+    },
+    "isActive":true
+}
+```
+
+Wrapper:
+
+```apex
+public class EmployeeWrapper {
+
+    public CustomerWrapper customer;
+
+    public Boolean isActive;
+}
+
+public class CustomerWrapper {
+
+    public String name;
+
+    public String city;
+}
+```
+
+---
+
+# Example 2: Array of Objects
+
+JSON:
+
+```json
+{
+    "customerName":"ABC Corp",
+    "contacts":[
+        {
+            "name":"Raj"
+        },
+        {
+            "name":"Amit"
+        }
+    ]
+}
+```
+
+Wrapper:
+
+```apex
+public class CustomerWrapper {
+
+    public String customerName;
+
+    public List<ContactWrapper> contacts;
+}
+
+public class ContactWrapper {
+
+    public String name;
+}
+```
+
+---
+
+# Example 3: Nested Object + Array + Boolean
+
+JSON:
+
+```json
+{
+    "account":{
+        "name":"ABC Corp"
+    },
+    "contacts":[
+        {
+            "name":"Raj",
+            "email":"raj@test.com"
+        },
+        {
+            "name":"Amit",
+            "email":"amit@test.com"
+        }
+    ],
+    "isActive":true
+}
+```
+
+Wrapper:
+
+```apex
+public class EmployeeWrapper {
+
+    public AccountWrapper account;
+
+    public List<ContactWrapper> contacts;
+
+    public Boolean isActive;
+}
+
+public class AccountWrapper {
+
+    public String name;
+}
+
+public class ContactWrapper {
+
+    public String name;
+
+    public String email;
+}
+```
+
+---
+
+# Important Mapping Rule
+
+JSON Key:
+
+```json
+{
+    "account":{ }
+}
+```
+
+Wrapper:
+
+```apex
+public AccountWrapper account;
+```
+
+JSON Key:
+
+```json
+{
+    "customer":{ }
+}
+```
+
+Wrapper:
+
+```apex
+public CustomerWrapper customer;
+```
+
+JSON Key:
+
+```json
+{
+    "contacts":[ ]
+}
+```
+
+Wrapper:
+
+```apex
+public List<ContactWrapper> contacts;
+```
+
+### Remember
+
+```text
+JSON Key
+      ↓
+Wrapper Variable Name
+```
+
+The wrapper variable name should match the JSON key.
+
+---
+
+# Quick JSON-to-Wrapper Cheat Sheet
+
+| JSON Structure    | Apex Wrapper                    |
+| ----------------- | ------------------------------- |
+| `"name":"Raj"`    | `String name`                   |
+| `"salary":50000`  | `Decimal salary`                |
+| `"isActive":true` | `Boolean isActive`              |
+| `"customer":{}`   | `CustomerWrapper customer`      |
+| `"account":{}`    | `AccountWrapper account`        |
+| `"contacts":[]`   | `List<ContactWrapper> contacts` |
+
+---
+
+# Memory Formula
+
+```text
+{}  → Wrapper Class
+
+[]  → List<Wrapper>
+
+Text → String
+
+Number → Decimal
+
+True/False → Boolean
+```
+
+Whenever you receive JSON:
+
+1. Find all `{}` → Create Wrapper Classes.
+2. Find all `[]` → Create Lists.
+3. Find all text values → String.
+4. Find all numbers → Decimal.
+5. Find all true/false values → Boolean.
+
+This approach can be used to design most Salesforce integration wrapper classes.
