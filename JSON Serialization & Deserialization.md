@@ -969,3 +969,221 @@ Whenever you receive JSON:
 5. Find true/false values → Boolean.
 
 This approach works for most Salesforce integration payloads.
+
+# Complex Nested JSON to Wrapper Class Mapping
+
+This example demonstrates how to convert a complex JSON structure containing:
+
+* Nested Objects
+* Arrays
+* Multiple Wrapper Classes
+
+into Apex Wrapper Classes.
+
+---
+
+# JSON Response
+
+```json
+{
+  "status":"SUCCESS",
+  "data":{
+      "account":{
+          "name":"ABC Corp",
+          "industry":"IT"
+      },
+      "contacts":[
+          {
+              "name":"Raj",
+              "email":"raj@test.com"
+          },
+          {
+              "name":"Amit",
+              "email":"amit@test.com"
+          }
+      ]
+  }
+}
+```
+
+---
+
+# Step 1: Analyze the JSON Structure
+
+```text
+Root Object
+│
+├── status
+│
+└── data
+      │
+      ├── account
+      │      ├── name
+      │      └── industry
+      │
+      └── contacts
+             │
+             ├── name
+             └── email
+```
+
+---
+
+# Identify Wrapper Classes
+
+### Root Object
+
+```json
+{
+}
+```
+
+Wrapper:
+
+```apex
+EmployeeWrapper
+```
+
+---
+
+### data Object
+
+```json
+"data":{
+}
+```
+
+Wrapper:
+
+```apex
+CustomerWrapper
+```
+
+---
+
+### account Object
+
+```json
+"account":{
+}
+```
+
+Wrapper:
+
+```apex
+AccountWrapper
+```
+
+---
+
+### contacts Array
+
+```json
+"contacts":[]
+```
+
+Wrapper:
+
+```apex
+List<ContactWrapper>
+```
+
+---
+
+# Apex Wrapper Classes
+
+```apex
+public class EmployeeWrapper {
+
+    public String status;
+
+    public CustomerWrapper data;
+}
+
+public class CustomerWrapper {
+
+    public AccountWrapper account;
+
+    public List<ContactWrapper> contacts;
+}
+
+public class AccountWrapper {
+
+    public String name;
+
+    public String industry;
+}
+
+public class ContactWrapper {
+
+    public String name;
+
+    public String email;
+}
+```
+
+---
+
+# Visual Mapping
+
+```text
+EmployeeWrapper
+│
+├── status
+│
+└── data (CustomerWrapper)
+      │
+      ├── account (AccountWrapper)
+      │      ├── name
+      │      └── industry
+      │
+      └── contacts (List<ContactWrapper>)
+             │
+             ├── ContactWrapper
+             │      ├── name
+             │      └── email
+             │
+             └── ContactWrapper
+                    ├── name
+                    └── email
+```
+
+
+
+# Interview Takeaway
+
+When designing Wrapper Classes from JSON:
+
+1. Identify all `{}` → Create Wrapper Classes.
+2. Identify all `[]` → Create `List<Wrapper>`.
+3. Map text values → `String`.
+4. Map numbers → `Decimal` (usually).
+5. Map true/false → `Boolean`.
+6. Ensure Wrapper variable names match JSON keys.
+
+Example:
+
+```json
+"account":{
+}
+```
+
+becomes:
+
+```apex
+public AccountWrapper account;
+```
+
+not
+
+```apex
+public AccountWrapper customer;
+```
+
+because Salesforce maps fields based on the JSON key names.
+
+---
+
+
+
+This pattern is commonly used in Salesforce REST integrations, payment gateways, ERP integrations, middleware systems, and external API responses.
