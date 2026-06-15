@@ -650,3 +650,322 @@ Whenever you receive JSON:
 5. Find all true/false values → Boolean.
 
 This approach can be used to design most Salesforce integration wrapper classes.
+
+# Understanding `{}` vs `[]` in JSON
+
+This is one of the most important concepts in Salesforce integrations.
+
+## Rule
+
+```text
+{}  → Wrapper Class
+
+[]  → List<Wrapper>
+```
+
+---
+
+# Example 1: Curly Braces `{}` = Wrapper Class
+
+## JSON
+
+```json
+{
+    "customer":{
+        "name":"ABC Corp",
+        "city":"Mumbai"
+    }
+}
+```
+
+Notice:
+
+```json
+"customer":{
+    "name":"ABC Corp",
+    "city":"Mumbai"
+}
+```
+
+The value of `customer` is enclosed within:
+
+```text
+{}
+```
+
+which means it is a single object.
+
+---
+
+## Apex Wrapper
+
+```apex
+public class ResponseWrapper {
+
+    public CustomerWrapper customer;
+}
+
+public class CustomerWrapper {
+
+    public String name;
+
+    public String city;
+}
+```
+
+---
+
+## Visual Mapping
+
+JSON:
+
+```json
+{
+    "customer":{
+        "name":"ABC Corp",
+        "city":"Mumbai"
+    }
+}
+```
+
+Wrapper:
+
+```text
+ResponseWrapper
+│
+└── customer
+      │
+      ├── name
+      └── city
+```
+
+---
+
+# Example 2: Square Brackets `[]` = List<Wrapper>
+
+## JSON
+
+```json
+{
+    "contacts":[
+        {
+            "name":"Raj"
+        },
+        {
+            "name":"Amit"
+        }
+    ]
+}
+```
+
+Notice:
+
+```json
+"contacts":[
+    { },
+    { }
+]
+```
+
+The value of `contacts` is enclosed within:
+
+```text
+[]
+```
+
+which means multiple objects.
+
+---
+
+## Apex Wrapper
+
+```apex
+public class ResponseWrapper {
+
+    public List<ContactWrapper> contacts;
+}
+
+public class ContactWrapper {
+
+    public String name;
+}
+```
+
+---
+
+## Visual Mapping
+
+JSON:
+
+```json
+{
+    "contacts":[
+        {
+            "name":"Raj"
+        },
+        {
+            "name":"Amit"
+        }
+    ]
+}
+```
+
+Wrapper:
+
+```text
+ResponseWrapper
+│
+└── contacts
+      │
+      ├── ContactWrapper
+      │      └── Raj
+      │
+      └── ContactWrapper
+             └── Amit
+```
+
+---
+
+# Side-by-Side Comparison
+
+## Single Object
+
+JSON:
+
+```json
+{
+    "customer":{
+        "name":"ABC Corp"
+    }
+}
+```
+
+Wrapper:
+
+```apex
+public CustomerWrapper customer;
+```
+
+Reason:
+
+```text
+{}
+=
+One Object
+=
+One Wrapper
+```
+
+---
+
+## Multiple Objects
+
+JSON:
+
+```json
+{
+    "customers":[
+        {
+            "name":"ABC Corp"
+        },
+        {
+            "name":"XYZ Corp"
+        }
+    ]
+}
+```
+
+Wrapper:
+
+```apex
+public List<CustomerWrapper> customers;
+```
+
+Reason:
+
+```text
+[]
+=
+Multiple Objects
+=
+List<Wrapper>
+```
+
+---
+
+# Interview Example
+
+## JSON
+
+```json
+{
+    "status":"SUCCESS",
+    "data":{
+        "accountName":"ABC Corp"
+    }
+}
+```
+
+Wrapper:
+
+```apex
+public DataWrapper data;
+```
+
+Because:
+
+```text
+data = {}
+```
+
+---
+
+## JSON
+
+```json
+{
+    "status":"SUCCESS",
+    "data":[
+        {
+            "accountName":"ABC Corp"
+        },
+        {
+            "accountName":"XYZ Corp"
+        }
+    ]
+}
+```
+
+Wrapper:
+
+```apex
+public List<DataWrapper> data;
+```
+
+Because:
+
+```text
+data = []
+```
+
+---
+
+# Quick Memory Trick
+
+```text
+{} = One Thing
+   = Wrapper
+
+[] = Many Things
+   = List<Wrapper>
+```
+
+Whenever you receive JSON:
+
+1. Find `{}` → Create Wrapper Classes.
+2. Find `[]` → Create Lists.
+3. Find text values → String.
+4. Find numeric values → Decimal.
+5. Find true/false values → Boolean.
+
+This approach works for most Salesforce integration payloads.
