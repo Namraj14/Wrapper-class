@@ -20,18 +20,24 @@
 }
 
 
+```apex
 public class EmployeeWrapper {
+
     public Boolean success;
     public String message;
     public List<ErrorWrapper> errors;
     public List<DataWrapper> data;
 }
+
 public class ErrorWrapper {
-    public Integer code;
+
+    public String code;
     public String message;
-    
 }
+
 public class DataWrapper {
+
     public Integer id;
     public String name;
 }
+```
