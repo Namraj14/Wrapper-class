@@ -20,3 +20,5 @@ SimpleJsonResponseWrapper response =
 
 System.debug(response.success);
 System.debug(response.message);
+
+JSON -> Wrapper (Deserialize)
